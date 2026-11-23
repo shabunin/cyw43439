@@ -465,6 +465,40 @@ func (d *Device) Join(ssid string, options JoinOptions) error {
 	return d.wait_for_join(ssid, true) // secure network
 }
 
+// Leave disassociates from the network joined, or being joined. The chip
+// tells the access point, which forgets the station's association and keys.
+// Call it before joining again after a failed join: an access point that
+// still holds an association for this station (it reset without leaving)
+// may let a new join associate but never complete the WPA handshake.
+//
+// Reference: https://github.com/embassy-rs/embassy/blob/main/cyw43/src/control.rs see `pub async fn leave`
+func (d *Device) Leave() error {
+	err := d.acquire(modeWifi)
+	defer d.release()
+	if err != nil {
+		return err
+	}
+	d.eventmask.Disable(whd.EvLINK)
+	d.eventmask.Disable(whd.EvDISASSOC)
+	d.eventmask.Disable(whd.EvDEAUTH)
+	d.state = linkStateDown
+	return d.doIoctlSet(whd.WLC_DISASSOC, whd.IF_STA, nil)
+}
+
+// RSSI returns the signal strength of the access point joined, in dBm.
+func (d *Device) RSSI() (int, error) {
+	err := d.acquire(modeWifi)
+	defer d.release()
+	if err != nil {
+		return 0, err
+	}
+	var buf [4]byte
+	if _, err := d.doIoctlGet(whd.WLC_GET_RSSI, whd.IF_STA, buf[:]); err != nil {
+		return 0, err
+	}
+	return int(int32(_busOrder.Uint32(buf[:]))), nil
+}
+
 // JoinWPA2 connects to a WPA2 WiFi network. If pass is empty, connects to an open network.
 //
 // Deprecated: Use [Device.Join] instead.

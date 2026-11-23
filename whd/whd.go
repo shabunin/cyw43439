@@ -235,6 +235,7 @@ const (
 	WLC_SET_WSEC      SDPCMCommand = 134
 	WLC_SET_BAND      SDPCMCommand = 142
 	WLC_GET_ASSOCLIST SDPCMCommand = 159
+	WLC_GET_RSSI      SDPCMCommand = 127
 	WLC_SET_WPA_AUTH  SDPCMCommand = 165
 	WLC_SET_VAR       SDPCMCommand = 263
 	WLC_GET_VAR       SDPCMCommand = 262
@@ -247,7 +248,7 @@ func (cmd SDPCMCommand) IsValid() bool {
 		cmd == WLC_GET_ANTDIV || cmd == WLC_SET_ANTDIV || cmd == WLC_SET_DTIMPRD || cmd == WLC_GET_PM ||
 		cmd == WLC_SET_PM || cmd == WLC_SET_GMODE || cmd == WLC_SET_AP || cmd == WLC_SET_WSEC || cmd == WLC_SET_BAND ||
 		cmd == WLC_GET_ASSOCLIST || cmd == WLC_SET_WPA_AUTH || cmd == WLC_SET_VAR || cmd == WLC_GET_VAR ||
-		cmd == WLC_SET_WSEC_PMK
+		cmd == WLC_SET_WSEC_PMK || cmd == WLC_GET_RSSI
 }
 
 // SDIO bus specifics
