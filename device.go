@@ -96,6 +96,11 @@ type Device struct {
 	authOK          bool // AUTH event succeeded. ref: runner.rs:90
 	joinOK          bool // JOIN event succeeded. ref: runner.rs:88
 	keyExchangeOK   bool // PSK_SUP key exchange succeeded. ref: runner.rs:89
+
+	// A running Scan: its callback, and the end of the scan.
+	scanFn     func(ScanResult)
+	scanDone   bool
+	scanStatus whd.EStatus
 }
 
 type Config struct {

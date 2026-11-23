@@ -531,6 +531,11 @@ func (d *Device) rxEvent(packet []byte) (err error) {
 		)
 	}
 	ev := aePacket.Message.EventType
+	if ev == whd.EvESCAN_RESULT {
+		// Scan results follow the event message; see Scan.
+		d.rxScanEvent(whd.EStatus(aePacket.Message.Status), bdcPacket[72:])
+		return nil
+	}
 	if !d.eventmask.IsEnabled(ev) {
 		return nil
 	}
